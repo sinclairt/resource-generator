@@ -3,7 +3,7 @@
   "description": "Creates and remove resource classes",
   "type": "library",
   "require": {
-    "illuminate/support": "^5.1",
+    "illuminate/support": "^5.1"
   },
   "autoload": {
     "psr-0": {
