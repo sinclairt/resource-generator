@@ -1,0 +1,21 @@
+{
+  "name": "sterling/resource-generator",
+  "description": "Creates and remove resource classes",
+  "type": "library",
+  "require": {
+    "illuminate/support": "^5.1",
+  },
+  "autoload": {
+    "psr-0": {
+      "Sterling\\ResourceGenerator": "src/"
+    }
+  },
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Tom Sinclair",
+      "email": "tsinclair@sterlingsolutions.co.uk"
+    }
+  ],
+  "minimum-stability": "dev"
+}
