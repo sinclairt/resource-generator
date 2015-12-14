@@ -1,7 +1,5 @@
 <?php namespace Sterling\ResourceGenerator;
 
-use App\Console\Commands\CreateResource;
-use App\Console\Commands\RemoveResource;
 use Illuminate\Support\ServiceProvider;
 
 class ResourceGeneratorServiceProvider extends ServiceProvider
