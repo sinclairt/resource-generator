@@ -275,7 +275,11 @@ class CreateResource extends Command
      */
     private function buildContents($stub)
     {
-        $contents = File::get(__DIR__ . '/stubs/' . $stub . '.php');
+        $package = __DIR__ . '/stubs/' . $stub . '.php';
+        
+        $custom = base_path('resources/stubs/vendor/resource-generator/' . $stub . '.php');
+
+        $contents = File::exists($custom) ? File::get($custom) : File::get($package);
 
         return $this->replaceDummy($contents);
     }
