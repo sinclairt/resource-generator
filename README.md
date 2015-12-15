@@ -2,16 +2,27 @@
 
 Create and remove components of a resource. These include:
 * Model
+
 * Model Interface
+
 * Model Facade
+
 * Repository
+
 * Repository Interface
+
 * Repository Facade
+
 * Resourceful Controller
+
 * Migration
+
 * Seeder
+
 * Create Form Request
+
 * Update From Request
+
 
 ### How do I get set up? ###
 
