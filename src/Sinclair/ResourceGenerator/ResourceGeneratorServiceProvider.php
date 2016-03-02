@@ -3,6 +3,7 @@
 namespace Sinclair\ResourceGenerator;
 
 use Illuminate\Support\ServiceProvider;
+use Sinclair\CrudController\Providers\CrudControllerServiceProvider;
 
 class ResourceGeneratorServiceProvider extends ServiceProvider
 {
@@ -44,6 +45,8 @@ class ResourceGeneratorServiceProvider extends ServiceProvider
         );
 
         $this->commands('command.resource.create', 'command.resource.remove');
+
+        $this->app->register(CrudControllerServiceProvider::class);
     }
 
     /**
