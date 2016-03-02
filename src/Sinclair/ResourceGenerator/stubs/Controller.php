@@ -8,7 +8,7 @@ use App\Http\Requests\CreateDummy;
 use App\Http\Requests\UpdateDummy;
 use Sinclair\CrudController\Traits\CrudController;
 
-class DummyController
+class DummyController extends Controller
 {
     use CrudController;
 
