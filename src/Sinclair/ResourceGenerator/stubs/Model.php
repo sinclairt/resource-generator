@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use Sinclair\CascadeSoftDeletes;
+use Sinclair\CascadeSoftDeletes\CascadeSoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 use App\Contracts\Dummy as DummyInterface;
 use Illuminate\Database\Eloquent\SoftDeletes;
