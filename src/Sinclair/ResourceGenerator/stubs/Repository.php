@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Contracts\Dummy;
 use App\Contracts\DummyRepository as DummyRepositoryInterface;
+use Sinclair\Repository\Repositories\Repository;
 
 class DummyRepository extends Repository implements DummyRepositoryInterface
 {

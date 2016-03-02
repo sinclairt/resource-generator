@@ -2,6 +2,6 @@
 
 namespace App\Contracts;
 
-use App\Contracts\Repository as RepositoryInterface;
+use Sinclair\Repository\Contracts\Repository as RepositoryInterface;
 
 interface DummyRepository extends RepositoryInterface{}
