@@ -4,7 +4,7 @@ namespace Sinclair\ResourceGenerator;
 
 use File;
 use Illuminate\Console\Command;
-use Illuminate\Foundation\Composer;
+use Illuminate\Support\Composer;
 
 class CreateResource extends Command
 {
