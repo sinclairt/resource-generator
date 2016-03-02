@@ -27,8 +27,8 @@ Create and remove components of a resource. These include:
 
 ### How do I get set up? ###
 
-* ``` composer require sterling\resource-generator ```.
-* Register the service provider ``` Sterling\ResourceGenerator\ResourceGeneratorServiceProvider ``` in ``` app\config ```.
+* ``` composer require sinclair\resource-generator ```.
+* Register the service provider ``` sinclair\ResourceGenerator\ResourceGeneratorServiceProvider ``` in ``` app\config ```.
 * Run ``` php artisan ``` to see two new commands ``` resource:create ``` and ``` resource:remove ```.
 
 ### Usage ###
