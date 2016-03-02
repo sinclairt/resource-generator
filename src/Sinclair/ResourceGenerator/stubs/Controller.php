@@ -6,11 +6,11 @@ use App\Contracts\DummyRepository;
 use App\Http\Requests;
 use App\Http\Requests\CreateDummy;
 use App\Http\Requests\UpdateDummy;
-use Sterling\MagicViews\HasMagicViews;
+use Sinclair\CrudController\Traits\CrudController;
 
-class DummyController extends CrudController
+class DummyController
 {
-    use HasMagicViews;
+    use CrudController;
 
     /**
      * @var DummyRepository

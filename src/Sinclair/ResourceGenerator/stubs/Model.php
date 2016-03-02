@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
-use App\Traits\CascadeSoftDeletes;
+use Sinclair\CascadeSoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 use App\Contracts\Dummy as DummyInterface;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Sterling\Track\TrackTrait;
+use Sinclair\Track\TrackTrait;
 
 class Dummy extends Model implements DummyInterface
 {

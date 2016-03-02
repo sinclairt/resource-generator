@@ -1,4 +1,6 @@
-<?php namespace Sterling\ResourceGenerator;
+<?php
+
+namespace Sinclair\ResourceGenerator;
 
 use Illuminate\Support\ServiceProvider;
 

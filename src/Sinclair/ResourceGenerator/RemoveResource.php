@@ -1,6 +1,6 @@
 <?php
 
-namespace Sterling\ResourceGenerator;
+namespace Sinclair\ResourceGenerator;
 
 use File;
 use Illuminate\Console\Command;
