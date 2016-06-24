@@ -68,9 +68,9 @@ class CreateResource extends Command
     {
         $this->resource = $this->argument('resource');
 
-        $model = ucwords($this->resource);
+        $model = studly_case($this->resource);
 
-        $str_to_lower_model = strtolower($this->resource);
+        $str_to_lower_model = snake_case($this->resource);
 
         $this->makeMigration($str_to_lower_model);
         $this->makeSeeder($model);
@@ -113,7 +113,7 @@ class CreateResource extends Command
      */
     private function makeClassName($stub)
     {
-        $filename = ucwords($this->resource);
+        $filename = studly_case($this->resource);
 
         if (str_contains($stub, 'Repository'))
             $filename .= 'Repository';
@@ -333,10 +333,10 @@ class CreateResource extends Command
     private function replaceDummy($contents)
     {
         return str_replace([ 'Dummy', 'dummy', 'Dummies', 'dummies' ], [
-            ucwords($this->resource),
-            strtolower($this->resource),
-            str_plural(ucwords($this->resource)),
-            str_plural(strtolower($this->resource))
+            studly_case($this->resource),
+            snake_case($this->resource),
+            str_plural(studly_case($this->resource)),
+            str_plural(snake_case($this->resource))
         ], $contents);
     }
 

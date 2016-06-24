@@ -45,7 +45,7 @@ class RemoveResource extends Command
      */
     public function handle()
     {
-        $model = ucwords($this->argument('resource'));
+        $model = studly_case($this->argument('resource'));
 
         $repository = $model . 'Repository';
 
