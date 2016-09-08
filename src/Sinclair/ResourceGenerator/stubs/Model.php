@@ -8,6 +8,10 @@ use App\Contracts\Dummy as DummyInterface;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Sinclair\Track\TrackTrait;
 
+/**
+ * Class Dummy
+ * @package App\Models
+ */
 class Dummy extends Model implements DummyInterface
 {
     use SoftDeletes, CascadeSoftDeletes, TrackTrait;
@@ -17,7 +21,7 @@ class Dummy extends Model implements DummyInterface
      *
      * @var array
      */
-    protected $children = [ ];
+    protected $children = [];
 
     /**
      * The database table used by the model.
@@ -31,14 +35,14 @@ class Dummy extends Model implements DummyInterface
      *
      * @var array
      */
-    protected $fillable = [  ];
+    protected $fillable = [];
 
     /**
      * The attributes excluded from the model's JSON form.
      *
      * @var array
      */
-    protected $hidden = [  ];
+    protected $hidden = [];
 
     /**
      * The dates that are returned as Carbon objects
@@ -52,5 +56,12 @@ class Dummy extends Model implements DummyInterface
      *
      * @var array
      */
-    public $fields = [ ];
+    public $fields = [];
+
+    /**
+     * These are the names of the columns/scopes you would like to be provided for filters
+     *
+     * @var array
+     */
+    public $filters = [];
 }

@@ -4,7 +4,12 @@ namespace Sinclair\ResourceGenerator;
 
 use Illuminate\Support\ServiceProvider;
 use Sinclair\CrudController\Providers\CrudControllerServiceProvider;
+use Sinclair\Track\TrackServiceProvider;
 
+/**
+ * Class ResourceGeneratorServiceProvider
+ * @package Sinclair\ResourceGenerator
+ */
 class ResourceGeneratorServiceProvider extends ServiceProvider
 {
 
@@ -22,7 +27,11 @@ class ResourceGeneratorServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->setWhatPublishes();
+        $this->publishes([
+            __DIR__ . '/stubs' => resource_path('stubs/vendor/resource-generator'),
+        ]);
+
+        $this->publishes([ __DIR__ . '/../../config' => config_path() ], 'config');
     }
 
     /**
@@ -32,14 +41,16 @@ class ResourceGeneratorServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app['command.resource.create'] = $this->app->share(
-            function ($app) {
+        $this->app[ 'command.resource.create' ] = $this->app->share(
+            function ()
+            {
                 return new CreateResource;
             }
         );
 
-        $this->app['command.resource.remove'] = $this->app->share(
-            function ($app) {
+        $this->app[ 'command.resource.remove' ] = $this->app->share(
+            function ()
+            {
                 return new RemoveResource();
             }
         );
@@ -47,6 +58,8 @@ class ResourceGeneratorServiceProvider extends ServiceProvider
         $this->commands('command.resource.create', 'command.resource.remove');
 
         $this->app->register(CrudControllerServiceProvider::class);
+
+        $this->app->register(TrackServiceProvider::class);
     }
 
     /**
@@ -56,14 +69,6 @@ class ResourceGeneratorServiceProvider extends ServiceProvider
      */
     public function provides()
     {
-        return [ 'command.resource.create', 'command.resource.remove'];
+        return [ 'command.resource.create', 'command.resource.remove' ];
     }
-
-    private function setWhatPublishes()
-    {
-        $this->publishes([
-            __DIR__ . '/stubs'                  => base_path('resources/stubs/vendor/resource-generator')
-        ]);
-    }
-
 }

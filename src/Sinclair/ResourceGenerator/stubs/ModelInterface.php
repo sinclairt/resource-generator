@@ -2,4 +2,10 @@
 
 namespace App\Contracts;
 
-interface Dummy{}
+/**
+ * Interface Dummy
+ * @package App\Contracts
+ */
+interface Dummy
+{
+}

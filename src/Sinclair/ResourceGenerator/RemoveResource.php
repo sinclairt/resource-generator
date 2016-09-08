@@ -5,6 +5,10 @@ namespace Sinclair\ResourceGenerator;
 use File;
 use Illuminate\Console\Command;
 
+/**
+ * Class RemoveResource
+ * @package Sinclair\ResourceGenerator
+ */
 class RemoveResource extends Command
 {
     /**
@@ -20,6 +24,7 @@ class RemoveResource extends Command
                             {--update-request : Only remove the update request}
                             {--repository : Only remove the repository}
                             {--controller : Only remove the controller}
+                            {--api-controller : Only remove the api controller}
                             {--model : Only remove the model}';
 
     /**
@@ -28,15 +33,6 @@ class RemoveResource extends Command
      * @var string
      */
     protected $description = 'Remove the classes and interfaces associated with the resource';
-
-    /**
-     * Create a new command instance.
-     *
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
 
     /**
      * Execute the console command.
@@ -51,7 +47,7 @@ class RemoveResource extends Command
 
         $files = $this->setFiles($model, $repository);
 
-        if ($this->notAll())
+        if ( $this->notAll() )
             $this->checkOptions($files, $model, $repository);
 
         $this->removeFiles($files, $model);
@@ -63,18 +59,19 @@ class RemoveResource extends Command
      *
      * @return array
      */
-    private function setFiles($model, $repository)
+    private function setFiles( $model, $repository )
     {
         return [
-            'Models/' . $model,
-            'Contracts/' . $model,
-            'Facades/' . $model,
-            'Repositories/' . $repository,
-            'Contracts/' . $repository,
-            'Facades/' . $repository,
+            config('resource-generator.objects-map.model', 'Models') . '/' . $model,
+            config('resource-generator.objects-map.model-interface', 'Contracts') . '/' . $model,
+            config('resource-generator.objects-map.model-facade', 'Facades') . '/' . $model,
+            config('resource-generator.objects-map.repository', 'Repositories') . '/' . $repository,
+            config('resource-generator.objects-map.repository-interface', 'Contracts') . '/' . $repository,
+            config('resource-generator.objects-map.repository-facade', 'Facades') . '/' . $repository,
+            config('resource-generator.objects-map.controller', 'Http/Controllers') . '/' . $model . 'Controller',
+            config('resource-generator.objects-map.api-controller', 'Http/Controllers/Api') . '/' . $model . 'Controller',
             'Http/Requests/' . 'Create' . $model,
             'Http/Requests/' . 'Update' . $model,
-            'Http/Controllers/' . $model . 'Controller'
         ];
     }
 
@@ -82,22 +79,22 @@ class RemoveResource extends Command
      * @param $files
      * @param $model
      */
-    private function keepModelClasses(&$files, $model)
+    private function keepModelClasses( &$files, $model )
     {
-        unset($files[ array_search('Models/' . $model, $files) ]);
-        unset($files[ array_search('Facades/' . $model, $files) ]);
-        unset($files[ array_search('Contracts/' . $model, $files) ]);
+        unset( $files[ array_search(config('resource-generator.objects-map.model', 'Models') . '/' . $model, $files) ] );
+        unset( $files[ array_search(config('resource-generator.objects-map.model-facade', 'Facades') . '/' . $model, $files) ] );
+        unset( $files[ array_search(config('resource-generator.objects-map.model-interface', 'Contracts') . '/' . $model, $files) ] );
     }
 
     /**
      * @param $files
      * @param $repository
      */
-    private function keepRepositoryClasses(&$files, $repository)
+    private function keepRepositoryClasses( &$files, $repository )
     {
-        unset($files[ array_search('Repositories/' . $repository, $files) ]);
-        unset($files[ array_search('Facades/' . $repository, $files) ]);
-        unset($files[ array_search('Contracts/' . $repository, $files) ]);
+        unset( $files[ array_search(config('resource-generator.objects-map.repository', 'Repositories') . '/' . $repository, $files) ] );
+        unset( $files[ array_search(config('resource-generator.objects-map.repository-facade', 'Facades') . '/' . $repository, $files) ] );
+        unset( $files[ array_search(config('resource-generator.objects-map.repository-interface', 'Contracts') . '/' . $repository, $files) ] );
     }
 
     /**
@@ -105,30 +102,33 @@ class RemoveResource extends Command
      * @param $model
      * @param $repository
      */
-    private function checkOptions(&$files, $model, $repository)
+    private function checkOptions( &$files, $model, $repository )
     {
-        if ($this->option('create-request') == null)
-            unset($files[ array_search('Http/Requests/' . 'Create' . $model, $files) ]);
+        if ( $this->option('create-request') == null )
+            unset( $files[ array_search('Http/Requests/' . 'Create' . $model, $files) ] );
 
-        if ($this->option('update-request') == null)
-            unset($files[ array_search('Http/Requests/' . 'Update' . $model, $files) ]);
+        if ( $this->option('update-request') == null )
+            unset( $files[ array_search('Http/Requests/' . 'Update' . $model, $files) ] );
 
-        if ($this->option('repository') == null)
+        if ( $this->option('repository') == null )
             $this->keepRepositoryClasses($files, $repository);
 
-        if ($this->option('model') == null)
+        if ( $this->option('model') == null )
             $this->keepModelClasses($files, $model);
 
-        if ($this->option('controller') == null)
-            unset($files[ array_search('Http/Controllers/' . $model . 'Controller', $files) ]);
+        if ( $this->option('controller') == null )
+            unset( $files[ array_search(config('resource-generator.objects-map.controller', 'Http/Controllers') . '/' . $model . 'Controller', $files) ] );
+
+        if ( $this->option('api-controller') == null )
+            unset( $files[ array_search(config('resource-generator.objects-map.api-controller', 'Http/Controllers/Api') . '/' . $model . 'Controller', $files) ] );
     }
 
     /**
      * @param $file
      */
-    private function handleFileDeletion($file)
+    private function handleFileDeletion( $file )
     {
-        if (File::exists(app_path($file . '.php')))
+        if ( File::exists(app_path($file . '.php')) )
         {
             File::delete(app_path($file . '.php'));
 
@@ -139,11 +139,11 @@ class RemoveResource extends Command
     /**
      * @param $model
      */
-    private function handleSeederRemoval($model)
+    private function handleSeederRemoval( $model )
     {
-        if (File::exists(database_path('seeds\\' . $model . 'TableSeeder.php')))
+        if ( File::exists(database_path('seeds/' . $model . 'TableSeeder.php')) )
         {
-            File::delete(database_path('seeds\\' . $model . 'TableSeeder.php'));
+            File::delete(database_path('seeds/' . $model . 'TableSeeder.php'));
 
             $this->info($model . 'TableSeeder Deleted!');
         }
@@ -152,7 +152,7 @@ class RemoveResource extends Command
     /**
      * @param $model
      */
-    private function handleMigrationDeletion($model)
+    private function handleMigrationDeletion( $model )
     {
         $migrations = File::glob(database_path('migrations/*_create_' . str_plural(strtolower($model)) . '_table.php'));
 
@@ -165,17 +165,17 @@ class RemoveResource extends Command
      * @param $files
      * @param $model
      */
-    private function removeFiles($files, $model)
+    private function removeFiles( $files, $model )
     {
-        foreach ($files as $file)
+        foreach ( $files as $file )
             $this->handleFileDeletion($file);
 
         // remove table seeder
-        if (! $this->notAll() || $this->option('seeder'))
+        if ( $this->all() || $this->option('seeder') )
             $this->handleSeederRemoval($model);
 
         // remove migration
-        if (! $this->notAll() || $this->option('migration'))
+        if ( $this->all() || $this->option('migration') )
             $this->handleMigrationDeletion($model);
     }
 
@@ -184,7 +184,11 @@ class RemoveResource extends Command
      */
     private function notAll()
     {
-        return $this->option('all') == false && sizeof(array_filter($this->option())) > 0;
+        $options = $this->option();
+
+        unset( $options[ 'no-interaction' ] );
+
+        return $this->option('all') == false && sizeof(array_filter($options)) > 0;
     }
 
     /**
@@ -193,13 +197,21 @@ class RemoveResource extends Command
      * @return bool
      *
      */
-    private function deleteMigration($migration)
+    private function deleteMigration( $migration )
     {
-        if (File::exists($migration))
+        if ( File::exists($migration) )
         {
             File::delete($migration);
 
             $this->info($migration . ' Deleted!');
         }
+    }
+
+    /**
+     * @return bool
+     */
+    private function all()
+    {
+        return !$this->notAll();
     }
 }

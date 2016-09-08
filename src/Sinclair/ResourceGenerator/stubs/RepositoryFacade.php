@@ -11,5 +11,8 @@ class DummyRepository extends Facade
      *
      * @return string
      */
-    protected static function getFacadeAccessor() { return 'DummyRepository'; }
+    protected static function getFacadeAccessor()
+    {
+        return 'DummyRepository';
+    }
 }

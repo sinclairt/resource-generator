@@ -8,21 +8,20 @@ use App\Http\Requests\CreateDummy;
 use App\Http\Requests\UpdateDummy;
 use Sinclair\CrudController\Traits\CrudController;
 
+/**
+ * Class DummyController
+ * @package App\Http\Controllers
+ */
 class DummyController extends Controller
 {
     use CrudController;
-
-    /**
-     * @var DummyRepository
-     */
-    protected $repository;
 
     /**
      * @param DummyRepository $repository
      */
     public function __construct(DummyRepository $repository)
     {
-        $this->repository = $repository;
+        $this->setUp($repository);
     }
 
     /**
@@ -34,10 +33,7 @@ class DummyController extends Controller
      */
     public function store(CreateDummy $request)
     {
-        $this->repository->add($request->all());
-
-        return redirect()->route('dummy.index');
-
+        return $this->doStore($request);
     }
 
     /**
@@ -50,8 +46,6 @@ class DummyController extends Controller
      */
     public function update(UpdateDummy $request, $model)
     {
-        $this->repository->update($request->all(), $model);
-
-        return redirect()->route('dummy.index');
+        return $this->doUpdate($request, $model);
     }
 }

@@ -3,8 +3,13 @@
   "description": "Creates and remove resource classes",
   "type": "library",
   "require": {
-    "illuminate/support": "^5.1",
-    "sinclair/crud-controller": "1.*"
+    "phpunit/phpunit": "~4.0",
+    "phpspec/phpspec": "~2.1",
+    "laracasts/testdummy": "~2.0",
+    "laravel/laravel": "dev-develop",
+    "sinclair/crud-controller": "1.*",
+    "sinclair/track": "^6.0",
+    "sinclair/cascade-soft-deletes": "^1.0"
   },
   "autoload": {
     "psr-0": {
@@ -18,5 +23,18 @@
       "email": "tom.sinclair31@gmail.com"
     }
   ],
-  "minimum-stability": "dev"
+  "minimum-stability": "dev",
+  "scripts": {
+    "phpunit": "./vendor/bin/phpunit;"
+  },
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "http://satis.wtbidev.co.uk"
+    }
+  ],
+  "config": {
+    "preferred-install": "dist",
+    "secure-http": false
+  }
 }

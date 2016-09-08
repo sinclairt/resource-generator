@@ -4,6 +4,10 @@ namespace App\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
+/**
+ * Class Dummy
+ * @package App\Facades
+ */
 class Dummy extends Facade
 {
     /**
@@ -11,5 +15,8 @@ class Dummy extends Facade
      *
      * @return string
      */
-    protected static function getFacadeAccessor() { return 'Dummy'; }
+    protected static function getFacadeAccessor()
+    {
+        return 'Dummy';
+    }
 }

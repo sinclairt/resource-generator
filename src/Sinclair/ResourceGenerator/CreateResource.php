@@ -2,10 +2,15 @@
 
 namespace Sinclair\ResourceGenerator;
 
-use File;
 use Illuminate\Console\Command;
+use Illuminate\Foundation\Bootstrap\LoadConfiguration;
 use Illuminate\Support\Composer;
+use Illuminate\Support\Facades\File;
 
+/**
+ * Class CreateResource
+ * @package Sinclair\ResourceGenerator
+ */
 class CreateResource extends Command
 {
     /**
@@ -22,6 +27,7 @@ class CreateResource extends Command
                             {--update-request : Create a update request}
                             {--repository : Create a repository}
                             {--controller : Create a controller}
+                            {--api-controller : Create an api controller}                                                        
                             ';
 
     /**
@@ -38,15 +44,10 @@ class CreateResource extends Command
      */
     protected $resource;
 
-    protected $objects = [
-        'Model'               => 'Models',
-        'ModelInterface'      => 'Contracts',
-        'ModelFacade'         => 'Facades',
-        'Repository'          => 'Repositories',
-        'RepositoryInterface' => 'Contracts',
-        'RepositoryFacade'    => 'Facades',
-        'Controller'          => 'Http/Controllers',
-    ];
+    /**
+     * @var array
+     */
+    protected $objects;
 
     /**
      * Create a new command instance.
@@ -55,6 +56,18 @@ class CreateResource extends Command
     public function __construct()
     {
         parent::__construct();
+
+        // pull in the namespaces and folders for each resource class
+        $this->objects = [
+            'Model'               => config('resource-generator.objects-map.model', 'Models'),
+            'ModelInterface'      => config('resource-generator.objects-map.model-interface', 'Contracts'),
+            'ModelFacade'         => config('resource-generator.objects-map.model-facade', 'Facades'),
+            'Repository'          => config('resource-generator.objects-map.repository', 'Repositories'),
+            'RepositoryInterface' => config('resource-generator.objects-map.repository-interface', 'Contracts'),
+            'RepositoryFacade'    => config('resource-generator.objects-map.repository-facade', 'Facades'),
+            'Controller'          => config('resource-generator.objects-map.controller', 'Http/Controllers'),
+            'ApiController'       => config('resource-generator.objects-map.api-controller', 'Http/Controllers/Api'),
+        ];
     }
 
     /**
@@ -64,7 +77,7 @@ class CreateResource extends Command
      *
      * @return mixed
      */
-    public function handle(Composer $composer)
+    public function handle( Composer $composer )
     {
         $this->resource = $this->argument('resource');
 
@@ -77,28 +90,38 @@ class CreateResource extends Command
         $this->makeCreateRequest($model);
         $this->makeUpdateRequest($model);
 
-        foreach ($this->objects as $stub => $directory)
+        foreach ( $this->objects as $stub => $directory )
             $this->buildClass($stub, $directory);
 
-        $this->askToMigrate($composer);
+        if ( $this->option('no-interaction') == null )
+        {
+            $this->askToMigrate($composer);
 
-        $this->askToSeed($composer, $model);
+            $this->askToSeed($composer, $model);
 
-        $this->showHelp($model, $str_to_lower_model);
+            $this->showHelp($model, $str_to_lower_model);
+        }
     }
 
+    /**
+     * @return bool
+     */
     private function all()
     {
-        return $this->option('all') || sizeof(array_filter($this->option())) == 0;
+        $options = $this->option();
+
+        unset( $options[ 'no-interaction' ] );
+
+        return $this->option('all') || sizeof(array_filter($options)) == 0;
     }
 
     /**
      * @param $stub
      * @param $directory
      */
-    private function buildClass($stub, $directory)
+    private function buildClass( $stub, $directory )
     {
-        if ($this->getOption($stub) || $this->all())
+        if ( $this->getOption($stub) || $this->all() )
         {
             $this->checkDirectory($directory);
 
@@ -111,14 +134,14 @@ class CreateResource extends Command
      *
      * @return string
      */
-    private function makeClassName($stub)
+    private function makeClassName( $stub )
     {
         $filename = studly_case($this->resource);
 
-        if (str_contains($stub, 'Repository'))
+        if ( str_contains($stub, 'Repository') )
             $filename .= 'Repository';
 
-        if (str_contains($stub, 'Controller'))
+        if ( str_contains($stub, 'Controller') )
             $filename .= 'Controller';
 
         return $filename;
@@ -128,7 +151,7 @@ class CreateResource extends Command
      * @param $model
      * @param $str_to_lower_model
      */
-    private function showHelp($model, $str_to_lower_model)
+    private function showHelp( $model, $str_to_lower_model )
     {
         $this->info('Make sure to add this to the following files:');
 
@@ -141,7 +164,7 @@ class CreateResource extends Command
         $this->line('{');
         $this->line('   AliasLoader::getInstance([');
 
-        if ($this->all() || $this->option('repository'))
+        if ( $this->all() || $this->option('repository') )
             $this->line("       '{$model}Repository' => {$model}Repository::class,");
 
         $this->line("       '{$model}'           => {$model}::class,");
@@ -154,12 +177,12 @@ class CreateResource extends Command
         $this->line('{');
         $this->line("   \$this->app->bind('App\\Contracts\\$model', 'App\\Models\\$model');");
 
-        if ($this->all() || $this->option('repository'))
+        if ( $this->all() || $this->option('repository') )
             $this->line("   \$this->app->bind('App\\Contracts\\{$model}Repository', 'App\\Repositories\\{$model}Repository');");
 
         $this->line("   \$this->app->bind('$model', 'App\\Contracts\\$model');");
 
-        if ($this->all() || $this->option('repository'))
+        if ( $this->all() || $this->option('repository') )
             $this->line("   \$this->app->bind('{$model}Repository', 'App\\Contracts\\{$model}Repository');");
         $this->line('}');
 
@@ -168,12 +191,12 @@ class CreateResource extends Command
         $this->comment('App\Http\routes.php');
         $this->comment('===================');
 
-        if ($this->all() || $this->option('controller'))
+        if ( $this->all() || $this->option('controller') )
             $this->line("Route::resource('$str_to_lower_model', '{$model}Controller');");
 
         $this->line('');
 
-        if ($this->all() || $this->option('controller'))
+        if ( $this->all() || $this->option('controller') )
         {
             $this->comment('App\Providers\RouteServiceProvider.php');
             $this->comment('==================================');
@@ -204,12 +227,15 @@ class CreateResource extends Command
      *
      * @return array|bool|string
      */
-    private function getOption($stub)
+    private function getOption( $stub )
     {
-        if (str_contains($stub, 'Repository'))
+        if ( str_contains($stub, 'ApiController') )
+            return $this->option('api-controller');
+
+        if ( str_contains($stub, 'Repository') )
             return $this->option('repository');
 
-        if (str_contains($stub, 'Controller'))
+        if ( str_contains($stub, 'Controller') )
             return $this->option('controller');
 
         return true;
@@ -218,10 +244,10 @@ class CreateResource extends Command
     /**
      * @param $str_to_lower_model
      */
-    private function makeMigration($str_to_lower_model)
+    private function makeMigration( $str_to_lower_model )
     {
         // migration
-        if ($this->option('migration') || $this->all())
+        if ( $this->option('migration') || $this->all() )
         {
             $contents = $this->replaceDummy(File::get(__DIR__ . '/stubs/Migration.php'));
 
@@ -234,20 +260,20 @@ class CreateResource extends Command
     /**
      * @param $model
      */
-    private function makeSeeder($model)
+    private function makeSeeder( $model )
     {
         // seeder
-        if ($this->option('seeder') || $this->all())
+        if ( $this->option('seeder') || $this->all() )
             \Artisan::call('make:seeder', [ 'name' => $model . 'TableSeeder' ]);
     }
 
     /**
      * @param $model
      */
-    private function makeCreateRequest($model)
+    private function makeCreateRequest( $model )
     {
         // create request
-        if ($this->option('create-request') || $this->all())
+        if ( $this->option('create-request') || $this->all() )
         {
             \Artisan::call('make:request', [ 'name' => 'Create' . $model ]);
             $this->info('CreateRequest created!');
@@ -257,10 +283,10 @@ class CreateResource extends Command
     /**
      * @param $model
      */
-    private function makeUpdateRequest($model)
+    private function makeUpdateRequest( $model )
     {
         // update request
-        if ($this->option('update-request') || $this->all())
+        if ( $this->option('update-request') || $this->all() )
         {
             \Artisan::call('make:request', [ 'name' => 'Update' . $model ]);
 
@@ -273,13 +299,13 @@ class CreateResource extends Command
      *
      * @return mixed|string
      */
-    private function buildContents($stub)
+    private function buildContents( $stub )
     {
         $package = __DIR__ . '/stubs/' . $stub . '.php';
-        
-        $custom = base_path('resources/stubs/vendor/resource-generator/' . $stub . '.php');
 
-        $contents = File::exists($custom) ? File::get($custom) : File::get($package);
+        $published = base_path('resources/stubs/vendor/resource-generator/' . $stub . '.php');
+
+        $contents = File::exists($published) ? File::get($published) : File::get($package);
 
         return $this->replaceDummy($contents);
     }
@@ -288,7 +314,7 @@ class CreateResource extends Command
      * @param $stub
      * @param $filename
      */
-    private function storeFile($stub, $filename)
+    private function storeFile( $stub, $filename )
     {
         File::put($filename, $this->buildContents($stub));
 
@@ -299,7 +325,7 @@ class CreateResource extends Command
      * @param $stub
      * @param $directory
      */
-    private function handleFile($stub, $directory)
+    private function handleFile( $stub, $directory )
     {
         $filename = $this->makeFileName($stub, $directory);
 
@@ -308,10 +334,15 @@ class CreateResource extends Command
 
     /**
      * @param $directory
+     *
+     * @return bool
      */
-    private function checkDirectory($directory)
+    private function checkDirectory( $directory )
     {
-        File::isDirectory(app_path($directory)) ?: File::makeDirectory(app_path($directory), '0777', true, true);
+//        var_dump($directory);
+        is_dir(app_path($directory)) ?: mkdir(app_path($directory), 0777, true);
+
+        chmod(app_path($directory), 0777);
     }
 
     /**
@@ -320,7 +351,7 @@ class CreateResource extends Command
      *
      * @return string
      */
-    private function makeFileName($stub, $directory)
+    private function makeFileName( $stub, $directory )
     {
         return app_path($directory . '/' . $this->makeClassName($stub) . '.php');
     }
@@ -330,7 +361,7 @@ class CreateResource extends Command
      *
      * @return mixed
      */
-    private function replaceDummy($contents)
+    private function replaceDummy( $contents )
     {
         return str_replace([ 'Dummy', 'dummy', 'Dummies', 'dummies' ], [
             studly_case($this->resource),
@@ -343,9 +374,9 @@ class CreateResource extends Command
     /**
      * @param Composer $composer
      */
-    private function askToMigrate(Composer $composer)
+    private function askToMigrate( Composer $composer )
     {
-        if ($this->confirm('Would you like to migrate the database now?'))
+        if ( $this->confirm('Would you like to migrate the database now?') )
         {
             $composer->dumpAutoloads();
 
@@ -357,9 +388,9 @@ class CreateResource extends Command
      * @param Composer $composer
      * @param $model
      */
-    private function askToSeed(Composer $composer, $model)
+    private function askToSeed( Composer $composer, $model )
     {
-        if ($this->confirm('Would you like to seed the database now?'))
+        if ( $this->confirm('Would you like to seed the database now?') )
         {
             $composer->dumpAutoloads();
 
