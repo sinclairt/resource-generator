@@ -3,13 +3,15 @@
   "description": "Creates and remove resource classes",
   "type": "library",
   "require": {
-    "phpunit/phpunit": "~4.0",
-    "phpspec/phpspec": "~2.1",
-    "laracasts/testdummy": "~2.0",
-    "laravel/laravel": "dev-develop",
     "sinclair/crud-controller": "1.*",
     "sinclair/track": "^6.0",
     "sinclair/cascade-soft-deletes": "^1.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "~4.0",
+    "phpspec/phpspec": "~2.1",
+    "laracasts/testdummy": "~2.0",
+    "laravel/laravel": "dev-develop"
   },
   "autoload": {
     "psr-0": {
