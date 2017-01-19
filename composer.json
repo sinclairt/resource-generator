@@ -32,11 +32,10 @@
   "repositories": [
     {
       "type": "composer",
-      "url": "http://satis.wtbidev.co.uk"
+      "url": "https://satis.ominor.co.uk"
     }
   ],
   "config": {
     "preferred-install": "dist",
-    "secure-http": false
   }
 }
