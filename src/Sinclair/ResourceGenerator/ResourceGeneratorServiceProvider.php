@@ -41,14 +41,14 @@ class ResourceGeneratorServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app[ 'command.resource.create' ] = $this->app->share(
+        $this->app[ 'command.resource.create' ] = $this->app->singleton(
             function ()
             {
                 return new CreateResource;
             }
         );
 
-        $this->app[ 'command.resource.remove' ] = $this->app->share(
+        $this->app[ 'command.resource.remove' ] = $this->app->singleton(
             function ()
             {
                 return new RemoveResource();
