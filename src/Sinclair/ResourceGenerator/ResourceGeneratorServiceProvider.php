@@ -8,11 +8,11 @@ use Sinclair\Track\TrackServiceProvider;
 
 /**
  * Class ResourceGeneratorServiceProvider
+ *
  * @package Sinclair\ResourceGenerator
  */
 class ResourceGeneratorServiceProvider extends ServiceProvider
 {
-
     /**
      * Indicates if loading of the provider is deferred.
      *
@@ -31,7 +31,7 @@ class ResourceGeneratorServiceProvider extends ServiceProvider
             __DIR__ . '/stubs' => resource_path('stubs/vendor/resource-generator'),
         ]);
 
-        $this->publishes([ __DIR__ . '/../../config' => config_path() ], 'config');
+        $this->publishes([__DIR__ . '/../../config' => config_path()], 'config');
     }
 
     /**
@@ -41,19 +41,13 @@ class ResourceGeneratorServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app[ 'command.resource.create' ] = $this->app->singleton(
-            function ()
-            {
-                return new CreateResource;
-            }
-        );
+        $this->app->singleton('command.resource.create', function () {
+            return new CreateResource;
+        });
 
-        $this->app[ 'command.resource.remove' ] = $this->app->singleton(
-            function ()
-            {
-                return new RemoveResource();
-            }
-        );
+        $this->app->singleton('command.resource.remove', function () {
+            return new RemoveResource();
+        });
 
         $this->commands('command.resource.create', 'command.resource.remove');
 
@@ -69,6 +63,6 @@ class ResourceGeneratorServiceProvider extends ServiceProvider
      */
     public function provides()
     {
-        return [ 'command.resource.create', 'command.resource.remove' ];
+        return ['command.resource.create', 'command.resource.remove'];
     }
 }
